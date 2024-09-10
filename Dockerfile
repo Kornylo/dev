@@ -1,10 +1,5 @@
-FROM ubuntu:latest
-LABEL authors="dk"
-
-ENTRYPOINT ["top", "-b"]
-
-# Use Python 3.9 base image
-FROM python:3.9
+# Use an official Python runtime as a base image
+FROM python:3.9-slim
 
 # Set the working directory in the container
 WORKDIR /app
@@ -12,11 +7,15 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . /app
 
-# Expose the port the app runs on
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Set environment variables
+ENV FLASK_APP=project
+ENV FLASK_ENV=development
+
+# Expose port 5000
 EXPOSE 5000
 
-# Define environment variable
-ENV FLASK_APP=project
-
-# Run the application
-CMD ["flask", "run", "--host=0.0.0.0"]
+# Command to run the Flask application
+CMD ["python", "-m", "flask", "run", "--host=0.0.0.0"]
